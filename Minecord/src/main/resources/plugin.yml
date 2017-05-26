@@ -1,0 +1,11 @@
+main: flicker.minecraft.minecord.Main
+name: Minecord
+version: 0.1
+author: Flicker
+description: Connects Minecraft and Discord chat.
+commands:
+  minecord:
+    description: Test command. Ping!
+    usage: /minecord
+    permission: minecord.minecord
+    permission-message: You don't have permission to use this command.
