@@ -14,20 +14,23 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 public class Main extends JavaPlugin {
 
-	FileConfiguration config = getConfig();
-	//
-	JDA jda;
+	public static Main singleton;
 	
-	@Override
-	public void onEnable()
+	public FileConfiguration config = getConfig();
+	
+	public JDA jda;
+	
+	private void SetupConfig()
 	{
 		config.addDefault("DiscordBotToken", "");
+		config.addDefault("DiscordGuildChannel","minecraft_chat");
+		//config.add
 		config.options().copyDefaults(true);
 		saveConfig();
-		
-		System.out.print("Test");
-		System.out.print("Token = " + config.getString("DiscordBotToken"));
-		
+	}
+	
+	private void SetupJDA()
+	{
 		try {
 			jda = new JDABuilder(AccountType.BOT).setToken(config.getString("DiscordBotToken")).buildBlocking();
 		} catch (LoginException e) {
@@ -44,14 +47,26 @@ public class Main extends JavaPlugin {
 			e.printStackTrace();
 		}
 		
-		jda.addEventListener(new MessageListener());
+		jda.addEventListener(new DiscordMessageListener());
+	}
+	
+	@Override
+	public void onEnable()
+	{		
+		singleton = this;
+		
+		SetupConfig();
+		SetupJDA();
+		
+	    getServer().getPluginManager().registerEvents(new MinecraftMessageListener(), this);
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		
+		singleton = null;
 	}
+
 	
     @Override
     public boolean onCommand(CommandSender sender,
@@ -61,7 +76,7 @@ public class Main extends JavaPlugin {
         if (command.getName().equalsIgnoreCase("minecord")) {
             sender.sendMessage("Hello, I'm Minecord Bot.");
             sender.sendMessage("Token = " + config.getString("DiscordBotToken"));
-            //sender.sendMessage(jda.asBot().getInviteUrl());
+            sender.sendMessage(jda.asBot().getInviteUrl());
             return true;
         }
 		return false;
