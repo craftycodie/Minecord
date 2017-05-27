@@ -1,6 +1,5 @@
 package flicker.minecraft.minecord;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -10,42 +9,58 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-import net.dv8tion.jda.core.entities.MessageChannel;
+import net.ess3.api.events.AfkStatusChangeEvent;
 
 public class MinecraftMessageListener implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-		MessageChannel channel = Main.singleton.jda.getTextChannelsByName(Main.singleton.config.getString("DiscordGuildChannel"), false).get(0);
-		channel.sendMessage("<" + ChatColor.stripColor(event.getPlayer().getDisplayName()) + "> " + ChatColor.stripColor(event.getMessage())).complete();
+		Main.singleton.guildChannel.sendMessage("<" + ChatColor.stripColor(event.getPlayer().getDisplayName()) + "> " + ChatColor.stripColor(event.getMessage())).complete();
     }
     
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-		MessageChannel channel = Main.singleton.jda.getTextChannelsByName(Main.singleton.config.getString("DiscordGuildChannel"), false).get(0);
-		channel.sendMessage(ChatColor.stripColor(event.getJoinMessage())).complete();
+		Main.singleton.guildChannel.sendMessage(ChatColor.stripColor(event.getJoinMessage())).complete();
     }
     
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event)
     {
-		MessageChannel channel = Main.singleton.jda.getTextChannelsByName(Main.singleton.config.getString("DiscordGuildChannel"), false).get(0);
-		channel.sendMessage(ChatColor.stripColor(event.getQuitMessage())).complete();
+		Main.singleton.guildChannel.sendMessage(ChatColor.stripColor(event.getQuitMessage())).complete();
     }
     
     @EventHandler
     public void onPlayerKick(PlayerKickEvent event)
     {
-		MessageChannel channel = Main.singleton.jda.getTextChannelsByName(Main.singleton.config.getString("DiscordGuildChannel"), false).get(0);
-		channel.sendMessage(ChatColor.stripColor(event.getLeaveMessage())).complete();
+    	Main.singleton.guildChannel.sendMessage(ChatColor.stripColor(event.getLeaveMessage())).complete();
     }
     
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event)
     {
-		MessageChannel channel = Main.singleton.jda.getTextChannelsByName(Main.singleton.config.getString("DiscordGuildChannel"), false).get(0);
-		channel.sendMessage(ChatColor.stripColor(event.getDeathMessage())).complete();
+		Main.singleton.guildChannel.sendMessage(ChatColor.stripColor(event.getDeathMessage())).complete();
+    }
+    
+    @EventHandler
+    public void onAfkChange(AfkStatusChangeEvent event)
+    {
+        String afkMessage = "AFK";
+        if(event.getValue())
+        	afkMessage = "is now " + afkMessage;
+        else
+        {
+    		//If the player just joined, no longer AFK state is not necessary.
+    		if(Main.singleton.guildChannel.getMessageById(Main.singleton.guildChannel.getLatestMessageId()).complete().getContent().equals("<" + event.getAffected().getName() + "> joined the game"))
+    			return;
+        	
+        	afkMessage = "is no longer " + afkMessage;
+        }
+        
+        afkMessage = event.getAffected().getName() + " " + afkMessage;
+		
+        Main.singleton.guildChannel.sendMessage(afkMessage).complete();
+		//channel.sendMessage(event.getValue())
     }
 	
 }

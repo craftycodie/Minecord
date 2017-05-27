@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 public class Main extends JavaPlugin {
@@ -19,12 +20,13 @@ public class Main extends JavaPlugin {
 	public FileConfiguration config = getConfig();
 	
 	public JDA jda;
+	public MessageChannel guildChannel; 
 	
 	private void SetupConfig()
 	{
 		config.addDefault("DiscordBotToken", "");
 		config.addDefault("DiscordGuildChannel","minecraft_chat");
-		//config.add
+		config.addDefault("RolePrefixes.Everyone", "Member>");
 		config.options().copyDefaults(true);
 		saveConfig();
 	}
@@ -47,6 +49,8 @@ public class Main extends JavaPlugin {
 			e.printStackTrace();
 		}
 		
+		guildChannel = Main.singleton.jda.getTextChannelsByName(Main.singleton.config.getString("DiscordGuildChannel"), false).get(0);
+		
 		jda.addEventListener(new DiscordMessageListener());
 	}
 	
@@ -59,11 +63,16 @@ public class Main extends JavaPlugin {
 		SetupJDA();
 		
 	    getServer().getPluginManager().registerEvents(new MinecraftMessageListener(), this);
+	    
+		MessageChannel channel = Main.singleton.jda.getTextChannelsByName(Main.singleton.config.getString("DiscordGuildChannel"), false).get(0);
+		channel.sendMessage("Minecord starting...").complete();
 	}
 	
 	@Override
 	public void onDisable()
 	{
+		MessageChannel channel = Main.singleton.jda.getTextChannelsByName(Main.singleton.config.getString("DiscordGuildChannel"), false).get(0);
+		channel.sendMessage("Minecord shutting down...").complete();
 		singleton = null;
 	}
 
@@ -75,7 +84,6 @@ public class Main extends JavaPlugin {
             String[] args) {
         if (command.getName().equalsIgnoreCase("minecord")) {
             sender.sendMessage("Hello, I'm Minecord Bot.");
-            sender.sendMessage("Token = " + config.getString("DiscordBotToken"));
             sender.sendMessage(jda.asBot().getInviteUrl());
             return true;
         }
