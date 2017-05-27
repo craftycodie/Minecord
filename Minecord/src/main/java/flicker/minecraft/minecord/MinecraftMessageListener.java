@@ -53,6 +53,9 @@ public class MinecraftMessageListener implements Listener {
     		//If the player just joined, no longer AFK state is not necessary.
     		if(Main.singleton.guildChannel.getMessageById(Main.singleton.guildChannel.getLatestMessageId()).complete().getContent().equals("<" + event.getAffected().getName() + "> joined the game"))
     			return;
+    		
+    		if(!Main.singleton.getServer().getPlayer(event.getAffected().getName()).isOnline())
+    			return;
         	
         	afkMessage = "is no longer " + afkMessage;
         }
