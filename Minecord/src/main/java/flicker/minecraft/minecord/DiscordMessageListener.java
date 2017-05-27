@@ -69,7 +69,7 @@ public class DiscordMessageListener extends ListenerAdapter
     				nicknamePrefix = "*";
     			
         		Bukkit.broadcastMessage("§9<" + prefix + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContent());
-    			event.getChannel().sendMessage("<" + nicknamePrefix + ChatColor.stripColor(event.getMember().getEffectiveName()) + "> " + event.getMessage().getContent()).complete();
+    			event.getChannel().sendMessage("<" + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContent()).complete();
     		}
     	}
     }
