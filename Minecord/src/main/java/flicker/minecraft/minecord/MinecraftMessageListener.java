@@ -21,7 +21,10 @@ public class MinecraftMessageListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-		Main.singleton.guildChannel.sendMessage(ChatColor.stripColor(event.getJoinMessage())).complete();
+    	if(event.getPlayer().hasPlayedBefore())
+    		Main.singleton.guildChannel.sendMessage(ChatColor.stripColor(event.getJoinMessage())).complete();
+    	else
+    		Main.singleton.guildChannel.sendMessage("Welcome **" + event.getPlayer().getDisplayName() + "** to the server!").complete();
     }
     
     @EventHandler
