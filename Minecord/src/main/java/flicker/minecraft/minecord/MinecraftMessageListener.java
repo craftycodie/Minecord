@@ -15,34 +15,34 @@ public class MinecraftMessageListener implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-		Main.singleton.guildChannel.sendMessage("<" + ChatColor.stripColor(event.getPlayer().getDisplayName()) + "> " + ChatColor.stripColor(event.getMessage())).complete();
+		MinecordPlugin.getInstance().chatChannel.sendMessage("<" + ChatColor.stripColor(event.getPlayer().getDisplayName()) + "> " + ChatColor.stripColor(event.getMessage())).complete();
     }
     
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
     	if(event.getPlayer().hasPlayedBefore())
-    		Main.singleton.guildChannel.sendMessage(ChatColor.stripColor(event.getJoinMessage())).complete();
+    		MinecordPlugin.getInstance().chatChannel.sendMessage(ChatColor.stripColor(event.getJoinMessage())).complete();
     	else
-    		Main.singleton.guildChannel.sendMessage("Welcome **" + event.getPlayer().getDisplayName() + "** to the server!").complete();
+    		MinecordPlugin.getInstance().chatChannel.sendMessage("Welcome **" + event.getPlayer().getDisplayName() + "** to the server!").complete();
     }
     
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event)
     {
-		Main.singleton.guildChannel.sendMessage(ChatColor.stripColor(event.getQuitMessage())).complete();
+    	MinecordPlugin.getInstance().chatChannel.sendMessage(ChatColor.stripColor(event.getQuitMessage())).complete();
     }
     
     @EventHandler
     public void onPlayerKick(PlayerKickEvent event)
     {
-    	Main.singleton.guildChannel.sendMessage(ChatColor.stripColor(event.getLeaveMessage())).complete();
+    	MinecordPlugin.getInstance().chatChannel.sendMessage(ChatColor.stripColor(event.getLeaveMessage())).complete();
     }
     
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event)
     {
-		Main.singleton.guildChannel.sendMessage(ChatColor.stripColor(event.getDeathMessage())).complete();
+    	MinecordPlugin.getInstance().chatChannel.sendMessage(ChatColor.stripColor(event.getDeathMessage())).complete();
     }
     
     @EventHandler
@@ -54,10 +54,10 @@ public class MinecraftMessageListener implements Listener {
         else
         {
     		//If the player just joined, no longer AFK state is not necessary.
-    		if(Main.singleton.guildChannel.getMessageById(Main.singleton.guildChannel.getLatestMessageId()).complete().getContent().equals("<" + event.getAffected().getName() + "> joined the game"))
+    		if(MinecordPlugin.getInstance().chatChannel.getMessageById(MinecordPlugin.getInstance().chatChannel.getLatestMessageId()).complete().getContent().equals("<" + event.getAffected().getName() + "> joined the game"))
     			return;
     		
-    		if(!Main.singleton.getServer().getPlayer(event.getAffected().getName()).isOnline())
+    		if(!MinecordPlugin.getInstance().getServer().getPlayer(event.getAffected().getName()).isOnline())
     			return;
         	
         	afkMessage = "is no longer " + afkMessage;
@@ -65,8 +65,7 @@ public class MinecraftMessageListener implements Listener {
         
         afkMessage = event.getAffected().getName() + " " + afkMessage;
 		
-        Main.singleton.guildChannel.sendMessage(afkMessage).complete();
-		//channel.sendMessage(event.getValue())
+        MinecordPlugin.getInstance().chatChannel.sendMessage(afkMessage).complete();
     }
 	
 }

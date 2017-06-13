@@ -1,7 +1,6 @@
 package flicker.minecraft.minecord;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -14,10 +13,14 @@ public class DiscordMessageListener extends ListenerAdapter
     @Override
     public void onMessageReceived(MessageReceivedEvent event)
     {
-    	if(event.getAuthor().getId().equals(Main.singleton.jda.getSelfUser().getId()))
+    	if(event.getAuthor().getId().equals(MinecordPlugin.getInstance().jda.getSelfUser().getId()))
     		return;
-    	
-    	if(event.isFromType(ChannelType.PRIVATE))
+    	if(event.getTextChannel().getName().equals(MinecordPlugin.getInstance().config.getString("DiscordConsoleChannel")))
+    	{
+    		MinecraftConsoleController.SendCommand(event.getMessage().getContent());
+    		return;
+    	}
+    	else if(event.isFromType(ChannelType.PRIVATE))
     	{
     		if(event.getMessage().getContent().equals("/list"))
     		{
@@ -30,7 +33,7 @@ public class DiscordMessageListener extends ListenerAdapter
 	    		event.getChannel().sendMessage(returnMessage).complete();
     		}
     	}
-    	else if(event.getTextChannel().getName().equals(Main.singleton.config.getString("DiscordGuildChannel")))
+    	else if(event.getTextChannel().getName().equals(MinecordPlugin.getInstance().config.getString("DiscordChatChannel")))
     	{
     		if(event.getMessage().getContent().equals("/list"))
     		{
@@ -44,13 +47,13 @@ public class DiscordMessageListener extends ListenerAdapter
 	    		event.getAuthor().openPrivateChannel().complete().sendMessage(returnMessage).complete();
     		}
     		
-    		String prefix = Main.singleton.config.getString("RolePrefixes.Everyone");
+    		String prefix = MinecordPlugin.getInstance().config.getString("RolePrefixes.Everyone");
     		
     		for(Role role : event.getMember().getRoles())
     		{    		
-    			if(Main.singleton.config.getString("RolePrefixes." + role.getName()) != null)
+    			if(MinecordPlugin.getInstance().config.getString("RolePrefixes." + role.getName()) != null)
     			{
-					prefix = Main.singleton.config.getString("RolePrefixes." + role.getName());
+					prefix = MinecordPlugin.getInstance().config.getString("RolePrefixes." + role.getName());
 					break;
     			}
     		}
@@ -66,7 +69,7 @@ public class DiscordMessageListener extends ListenerAdapter
     		{
     			String nicknamePrefix = "";
     			if(event.getMember().getNickname() != null)
-    				nicknamePrefix = "*";
+    				nicknamePrefix = MinecordPlugin.getInstance().config.getString("NicknamePrefix");
     			
         		Bukkit.broadcastMessage("§9<" + prefix + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContent());
     			event.getChannel().sendMessage("<" + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContent()).complete();

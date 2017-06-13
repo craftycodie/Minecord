@@ -1,6 +1,8 @@
 package flicker.minecraft.minecord;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 import javax.security.auth.login.LoginException;
 
 import org.bukkit.command.Command;
@@ -13,20 +15,26 @@ import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
-public class Main extends JavaPlugin {
-
-	public static Main singleton;
+public class MinecordPlugin extends JavaPlugin {
 	
 	public FileConfiguration config = getConfig();
 	
 	public JDA jda;
-	public MessageChannel guildChannel; 
+	public MessageChannel chatChannel; 
+	public MessageChannel consoleChannel;
+	
+	public static MinecordPlugin getInstance()
+	{
+		return getPlugin(MinecordPlugin.class);
+	}
 	
 	private void SetupConfig()
 	{
 		config.addDefault("DiscordBotToken", "");
-		config.addDefault("DiscordGuildChannel","minecraft_chat");
-		config.addDefault("RolePrefixes.Everyone", "Member>");
+		config.addDefault("DiscordChatChannel","minecraft_chat");
+		config.addDefault("DiscordConsoleChannel","minecraft_console");
+		config.addDefault("NicknamePrefix", "»");
+		config.addDefault("RolePrefixes.Everyone", "Newbie>");
 		config.options().copyDefaults(true);
 		saveConfig();
 	}
@@ -49,31 +57,36 @@ public class Main extends JavaPlugin {
 			e.printStackTrace();
 		}
 		
-		guildChannel = Main.singleton.jda.getTextChannelsByName(Main.singleton.config.getString("DiscordGuildChannel"), false).get(0);
+		chatChannel = jda.getTextChannelsByName(config.getString("DiscordChatChannel"), false).get(0);
+		consoleChannel = jda.getTextChannelsByName(config.getString("DiscordConsoleChannel"), false).get(0);
 		
 		jda.addEventListener(new DiscordMessageListener());
+	}
+	
+	private void SetupConsole()
+	{
+		Logger log = (Logger) LogManager.getRootLogger();
+		MinecraftConsoleController newAppender = new MinecraftConsoleController("MinecraftConsoleController", null, null, false);
+        log.addAppender(newAppender);
+        newAppender.enabled = true;
 	}
 	
 	@Override
 	public void onEnable()
 	{		
-		singleton = this;
-		
 		SetupConfig();
 		SetupJDA();
+		SetupConsole();
 		
 	    getServer().getPluginManager().registerEvents(new MinecraftMessageListener(), this);
 	    
-		MessageChannel channel = Main.singleton.jda.getTextChannelsByName(Main.singleton.config.getString("DiscordGuildChannel"), false).get(0);
-		channel.sendMessage("Minecord starting...").complete();
+	    chatChannel.sendMessage("Minecord starting...").complete();
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		MessageChannel channel = Main.singleton.jda.getTextChannelsByName(Main.singleton.config.getString("DiscordGuildChannel"), false).get(0);
-		channel.sendMessage("Minecord shutting down...").complete();
-		singleton = null;
+		chatChannel.sendMessage("Minecord shutting down...").complete();
 	}
 
 	

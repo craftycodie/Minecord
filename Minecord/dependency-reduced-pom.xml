@@ -18,6 +18,21 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>log4j-plugin-processor</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <proc>only</proc>
+              <annotationProcessors>
+                <annotationProcessor>org.apache.logging.log4j.core.config.plugins.processor.PluginProcessor</annotationProcessor>
+              </annotationProcessors>
+            </configuration>
+          </execution>
+        </executions>
         <configuration>
           <source>1.7</source>
           <target>1.7</target>
@@ -48,6 +63,8 @@
               </artifactSet>
               <relocations>
                 <relocation>
+                  <pattern>org.apache.logging.log4j</pattern>
+                  <shadedPattern>org.shaded.logging.log4j</shadedPattern>
                   <pattern>org.apache.commons.lang3</pattern>
                   <shadedPattern>org.shaded.commons.lang</shadedPattern>
                 </relocation>
