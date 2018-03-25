@@ -20,9 +20,9 @@ public class DiscordMessageListener extends ListenerAdapter
             MinecraftConsoleController.SendCommand(event.getMessage().getContentRaw());
             event.getChannel().deleteMessageById(event.getMessageIdLong()).complete();
             if(event.getMember().getNickname() != null)
-                event.getChannel().sendMessage("`** USER " + event.getMember().getUser().getName() + "#" + event.getMember().getUser().getDiscriminator() + " (" + event.getMember().getNickname() + ") ISSUED COMMAND " + event.getMessage().getContentRaw() +"**`").complete();
+                event.getChannel().sendMessage("`** USER " + event.getMember().getUser().getName() + "#" + event.getMember().getUser().getDiscriminator() + " (" + event.getMember().getNickname() + ") ISSUED COMMAND " + event.getMessage().getContentRaw() +" **`").complete();
             else
-                event.getChannel().sendMessage("`** USER " + event.getMember().getUser().getName() + "#" + event.getMember().getUser().getDiscriminator() + " ISSUED COMMAND " + event.getMessage().getContentRaw() +"**`").complete();
+                event.getChannel().sendMessage("`** USER " + event.getMember().getUser().getName() + "#" + event.getMember().getUser().getDiscriminator() + " ISSUED COMMAND " + event.getMessage().getContentRaw() +" **`").complete();
             return;
     	}
     	else if(event.isFromType(ChannelType.PRIVATE))
