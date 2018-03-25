@@ -1,6 +1,5 @@
 package alex231.minecraft.minecord;
 
-
 import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
@@ -14,7 +13,6 @@ import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 public class MinecordPlugin extends JavaPlugin {
 	
@@ -23,6 +21,7 @@ public class MinecordPlugin extends JavaPlugin {
     public JDA jda;
     public MessageChannel chatChannel; 
     public MessageChannel consoleChannel;
+    MinecraftConsoleController consoleAppender;
 
     public static MinecordPlugin getInstance()
     {
@@ -48,10 +47,7 @@ public class MinecordPlugin extends JavaPlugin {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        // TODO Auto-generated catch block
-        // TODO Auto-generated catch block
-        // TODO Auto-generated catch block
-
+        
         chatChannel = jda.getTextChannelsByName(config.getString("DiscordChatChannel"), false).get(0);
         consoleChannel = jda.getTextChannelsByName(config.getString("DiscordConsoleChannel"), false).get(0);
 
@@ -61,9 +57,9 @@ public class MinecordPlugin extends JavaPlugin {
     private void SetupConsole()
     {
         Logger log = (Logger) LogManager.getRootLogger();
-        MinecraftConsoleController newAppender = new MinecraftConsoleController("MinecraftConsoleController", null, null, false);
-        newAppender.start();
-        log.addAppender(newAppender);
+        consoleAppender = new MinecraftConsoleController("MinecraftConsoleController", null, null, false);
+        consoleAppender.start();
+        log.addAppender(consoleAppender);
     }
 
     @Override
@@ -75,17 +71,17 @@ public class MinecordPlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new MinecraftMessageListener(), this);
 
-        chatChannel.sendMessage("**" + "Minecord starting..." + "**").complete();
-        consoleChannel.sendMessage("** BEGIN MINECORD CONSOLE OUTPUT **").complete();
-        consoleChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").complete();
+        chatChannel.sendMessage("**" + "MINECORD STARTING" + "**").complete();
+        chatChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").complete();
     }
 
     @Override
     public void onDisable()
     {
-        chatChannel.sendMessage("**" + "Minecord shutting down..." + "**").complete();
-        consoleChannel.sendMessage("** END MINECORD CONSOLE OUTPUT **").complete();
-        consoleChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").complete();
+        consoleAppender.stop();
+        
+        chatChannel.sendMessage("**" + "MINECORD SHUTTING DOWN" + "**").complete();
+        chatChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").complete();
     }
 
 	

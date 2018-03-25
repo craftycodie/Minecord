@@ -16,6 +16,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 
 @Plugin(name = "MinecraftConsoleController", category = "Core", elementType = "appender", printObject = true)
@@ -72,6 +73,8 @@ public class MinecraftConsoleController extends AbstractAppender {
     @Override
     public void start()
     {
+        MinecordPlugin.getInstance().consoleChannel.sendMessage("** BEGIN MINECORD CONSOLE OUTPUT **").complete();
+        MinecordPlugin.getInstance().consoleChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").complete();
         enabled = true;
 
         discordSendThread = new Thread(consoleSender);
@@ -86,6 +89,9 @@ public class MinecraftConsoleController extends AbstractAppender {
         enabled = false;
         discordSendThread.stop();
         super.stop();
+        
+        MinecordPlugin.getInstance().consoleChannel.sendMessage("** END MINECORD CONSOLE OUTPUT **").complete();
+        MinecordPlugin.getInstance().consoleChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").complete();
     }
     
     @PluginFactory
@@ -111,7 +117,7 @@ public class MinecraftConsoleController extends AbstractAppender {
     public void append(LogEvent logEvent) 
     {
         if(enabled)
-            console.add(logEvent.getMessage().getFormattedMessage());
+            console.add(ChatColor.stripColor(logEvent.getMessage().getFormattedMessage()));
     }
 
     public static void SendCommand(String command)

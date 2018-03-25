@@ -67,7 +67,7 @@ public class DiscordMessageListener extends ListenerAdapter
 
             if(event.getMessage().getContentRaw().length() > 256)
             {
-                event.getAuthor().openPrivateChannel().complete().sendMessage("The message you just tried to send it over 256 characters! You sent:").complete();
+                event.getAuthor().openPrivateChannel().complete().sendMessage("**ERROR: The message you just tried to send it over 256 characters! You sent:**").complete();
                 event.getAuthor().openPrivateChannel().complete().sendMessage(event.getMessage().getContentRaw()).complete();
             }
             else
@@ -77,8 +77,8 @@ public class DiscordMessageListener extends ListenerAdapter
                     nicknamePrefix = MinecordPlugin.getInstance().config.getString("NicknamePrefix");
 
                 //Bukkit.broadcastMessage("§9<" + prefix + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContentRaw());
-                Bukkit.broadcastMessage("§9<Discord>" + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContentRaw());
-                event.getChannel().sendMessage("<**" + nicknamePrefix + event.getMember().getEffectiveName() + "**> `" + event.getMessage().getContentRaw() + "`").complete();
+                Bukkit.broadcastMessage("§9<" + prefix + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContentDisplay());
+                event.getChannel().sendMessage("<" + prefix + "**" + nicknamePrefix + event.getMember().getEffectiveName() + "**> " + event.getMessage().getContentRaw()).complete();
             }
     	}
     }
