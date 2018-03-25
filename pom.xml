@@ -2,9 +2,9 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>flicker.minecraft.minecord</groupId>
+  <groupId>alex231.minecraft.minecord</groupId>
   <artifactId>Minecord</artifactId>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.3-SNAPSHOT</version>
   	<build>
 		<plugins>
 		
@@ -57,7 +57,7 @@
                             </includes>
 
               </artifactSet>
-                                                        <relocations>
+              <relocations>
                 <relocation>
                   <pattern>org.apache.logging.log4j</pattern>
                   <shadedPattern>org.shaded.logging.log4j</shadedPattern>
@@ -85,19 +85,15 @@
   <url>http://maven.apache.org</url>
 
 	<repositories>
-	   	<repository>
-	       	<id>spigot-repo</id>
-	       	<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-	   	</repository>
-		<repository>
-	            <id>bukkit-repo</id>
-	            <url>http://repo.bukkit.org/content/groups/public/</url>
-		</repository>
-		<repository>
+			<repository>
 			<id>jcenter</id>
 			<name>jcenter-bintray</name>
 			<url>http://jcenter.bintray.com</url>
 		</repository>
+	   	<repository>
+	       	<id>spigot-repo</id>
+	       	<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+	   	</repository>
 	</repositories>
 
   <properties>
@@ -114,19 +110,19 @@
     <dependency>
     	<groupId>org.spigotmc</groupId>
     	<artifactId>spigot-api</artifactId>
-    	<version>1.11.2-R0.1-SNAPSHOT</version>
+    	<version>1.12.1-R0.1-SNAPSHOT</version>
     	<scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>org.bukkit</groupId>
-    	<artifactId>craftbukkit</artifactId>
-    	<version>1.11.2-R0.1-SNAPSHOT</version>
+    	<artifactId>bukkit</artifactId>
+    	<version>1.12.1-R0.1-SNAPSHOT</version>
     	<scope>provided</scope>
     </dependency>
-    <dependency>
-    	<groupId>net.dv8tion</groupId>
-    	<artifactId>jda</artifactId>
-    	<version>3.1.0_205</version>
+		<dependency>
+				<groupId>net.dv8tion</groupId>
+				<artifactId>JDA</artifactId>
+    	<version>3.5.1_351</version>
     </dependency>
         <dependency>
         <groupId>org.apache.commons</groupId>
