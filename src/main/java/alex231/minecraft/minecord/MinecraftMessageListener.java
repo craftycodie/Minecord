@@ -11,9 +11,13 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 import net.ess3.api.IEssentials;
 import com.earth2me.essentials.User;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import net.ess3.api.events.AfkStatusChangeEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public class MinecraftMessageListener implements Listener {
 
@@ -73,6 +77,45 @@ public class MinecraftMessageListener implements Listener {
         afkMessage = event.getAffected().getName() + " " + afkMessage;
 		
         MinecordPlugin.getInstance().chatChannel.sendMessage("*" + afkMessage + "*").complete();
+    }
+    
+    @EventHandler
+    public void PlayerCommand(PlayerCommandPreprocessEvent event) {
+        Player p = event.getPlayer();
+        
+        String commandLabel = event.getMessage().split(" ")[0].replace("/", "");
+        ArrayList<String> commandArguments = new ArrayList<>(Arrays.asList(event.getMessage().split(" ")));
+        commandArguments.remove(0);
+        if(commandArguments.size() < 1)
+            return;
+        
+        String message = String.join(" ", commandArguments);
+        String discordMessage = "";
+        
+        switch(commandLabel)
+        {
+            case "me":
+            case "minecraft:me":
+            case "action":
+                discordMessage = "> **" +  ChatColor.stripColor(p.getDisplayName()) + "** " + ChatColor.stripColor(message) + " <";
+                break;
+            case "say":
+            case "minecraft:say":
+                discordMessage = "**[" +  ChatColor.stripColor(p.getDisplayName()) + "] " + ChatColor.stripColor(message) + "**";
+                break;
+            case "shout":
+            case "broadcast":
+                discordMessage = "**[Broadcast] " + ChatColor.stripColor(message) + "**";
+                break;
+            default:
+                return;
+        }
+        
+        if(discordMessage.equals(""))
+            return;
+        
+        MinecordPlugin.getInstance().chatChannel.sendMessage(discordMessage).complete();
+        
     }
 	
 }

@@ -76,9 +76,19 @@ public class DiscordMessageListener extends ListenerAdapter
                 if(event.getMember().getNickname() != null)
                     nicknamePrefix = MinecordPlugin.getInstance().config.getString("NicknamePrefix");
 
-                //Bukkit.broadcastMessage("§9<" + prefix + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContentRaw());
-                Bukkit.broadcastMessage("§9<" + prefix + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContentDisplay());
-                event.getChannel().sendMessage("<" + prefix + "**" + nicknamePrefix + event.getMember().getEffectiveName() + "**> " + event.getMessage().getContentRaw()).complete();
+                char firstChar = event.getMessage().getContentRaw().charAt(0);
+                char lastChar = event.getMessage().getContentRaw().charAt(event.getMessage().getContentRaw().length() - 1);
+                if((firstChar == '*' && lastChar == '*') || (firstChar == '_' && lastChar == '_'))
+                {
+                    Bukkit.broadcastMessage("§9> " + nicknamePrefix + event.getMember().getEffectiveName() + " " + event.getMessage().getContentStripped() + " <");
+                    event.getChannel().sendMessage("> **" + nicknamePrefix + event.getMember().getEffectiveName() + "** " + event.getMessage().getContentStripped() + " <").complete();
+                }
+                else
+                {
+                    //Bukkit.broadcastMessage("§9<" + prefix + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContentRaw());
+                    Bukkit.broadcastMessage("§9<" + prefix + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContentStripped());
+                    event.getChannel().sendMessage("<" + prefix + "**" + nicknamePrefix + event.getMember().getEffectiveName() + "**> " + event.getMessage().getContentRaw()).complete();
+                }
             }
     	}
     }
