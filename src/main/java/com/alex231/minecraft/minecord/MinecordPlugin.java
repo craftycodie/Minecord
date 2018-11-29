@@ -1,4 +1,4 @@
-package alex231.minecraft.minecord;
+package com.alex231.minecraft.minecord;
 
 import java.util.Date;
 import org.apache.logging.log4j.LogManager;

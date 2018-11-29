@@ -1,4 +1,4 @@
-package alex231.minecraft.minecord;
+package com.alex231.minecraft.minecord;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;

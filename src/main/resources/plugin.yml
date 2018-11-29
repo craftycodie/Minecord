@@ -1,4 +1,4 @@
-main: alex231.minecraft.minecord.MinecordPlugin
+main: com.alex231.minecraft.minecord.MinecordPlugin
 name: Minecord
 version: 0.3
 author: alex231
