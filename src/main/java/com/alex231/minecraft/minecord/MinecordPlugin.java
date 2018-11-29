@@ -71,8 +71,8 @@ public class MinecordPlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new MinecraftMessageListener(), this);
 
-        chatChannel.sendMessage("**" + "MINECORD STARTING" + "**").complete();
-        chatChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").complete();
+        chatChannel.sendMessage("**" + "MINECORD STARTING" + "**").queue();
+        chatChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").queue();
     }
 
     @Override
@@ -80,8 +80,8 @@ public class MinecordPlugin extends JavaPlugin {
     {
         consoleAppender.stop();
         
-        chatChannel.sendMessage("**" + "MINECORD SHUTTING DOWN" + "**").complete();
-        chatChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").complete();
+        chatChannel.sendMessage("**" + "MINECORD SHUTTING DOWN" + "**").queue();
+        chatChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").queue();
     }
 
 	

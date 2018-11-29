@@ -18,6 +18,7 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.scheduler.BukkitRunnable;
 
 @Plugin(name = "MinecraftConsoleController", category = "Core", elementType = "appender", printObject = true)
 public class MinecraftConsoleController extends AbstractAppender {
@@ -50,7 +51,7 @@ public class MinecraftConsoleController extends AbstractAppender {
                         messages.add("`" + message + "`");
                     
                     for(String msg : messages)
-                        MinecordPlugin.getInstance().consoleChannel.sendMessage(msg).complete();
+                        MinecordPlugin.getInstance().consoleChannel.sendMessage(msg).queue();
 
                     console = new ArrayList<>();
                 }
@@ -73,8 +74,8 @@ public class MinecraftConsoleController extends AbstractAppender {
     @Override
     public void start()
     {
-        MinecordPlugin.getInstance().consoleChannel.sendMessage("** BEGIN MINECORD CONSOLE OUTPUT **").complete();
-        MinecordPlugin.getInstance().consoleChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").complete();
+        MinecordPlugin.getInstance().consoleChannel.sendMessage("**BEGIN MINECORD CONSOLE OUTPUT**").queue();
+        MinecordPlugin.getInstance().consoleChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").queue();
         enabled = true;
 
         discordSendThread = new Thread(consoleSender);
@@ -90,8 +91,8 @@ public class MinecraftConsoleController extends AbstractAppender {
         discordSendThread.stop();
         super.stop();
         
-        MinecordPlugin.getInstance().consoleChannel.sendMessage("** END MINECORD CONSOLE OUTPUT **").complete();
-        MinecordPlugin.getInstance().consoleChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").complete();
+        MinecordPlugin.getInstance().consoleChannel.sendMessage("**END MINECORD CONSOLE OUTPUT**").queue();
+        MinecordPlugin.getInstance().consoleChannel.sendMessage("*Date/Time: " + new Date().toGMTString() + "*").queue();
     }
     
     @PluginFactory
@@ -122,7 +123,12 @@ public class MinecraftConsoleController extends AbstractAppender {
 
     public static void SendCommand(String command)
     {
-        ConsoleCommandSender sender = Bukkit.getServer().getConsoleSender();
-        Bukkit.getServer().dispatchCommand(sender, command);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ConsoleCommandSender sender = Bukkit.getServer().getConsoleSender();
+                Bukkit.getServer().dispatchCommand(sender, command);
+            }
+        }.runTaskLater(MinecordPlugin.getInstance(), 20);
     }
 }

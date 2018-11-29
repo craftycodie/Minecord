@@ -18,11 +18,12 @@ public class DiscordMessageListener extends ListenerAdapter
     	if(event.getTextChannel().getName().equals(MinecordPlugin.getInstance().config.getString("DiscordConsoleChannel")))
     	{
             MinecraftConsoleController.SendCommand(event.getMessage().getContentRaw());
-            event.getChannel().deleteMessageById(event.getMessageIdLong()).complete();
+            event.getChannel().deleteMessageById(event.getMessageIdLong()).queue();
             if(event.getMember().getNickname() != null)
-                event.getChannel().sendMessage("`** USER " + event.getMember().getUser().getName() + "#" + event.getMember().getUser().getDiscriminator() + " (" + event.getMember().getNickname() + ") ISSUED COMMAND " + event.getMessage().getContentRaw() +" **`").complete();
+                event.getChannel().sendMessage("`** USER " + event.getMember().getUser().getName() + "#" + event.getMember().getUser().getDiscriminator() + " (" + event.getMember().getNickname() + ") ISSUED COMMAND " + event.getMessage().getContentRaw() +" **`").queue();
             else
-                event.getChannel().sendMessage("`** USER " + event.getMember().getUser().getName() + "#" + event.getMember().getUser().getDiscriminator() + " ISSUED COMMAND " + event.getMessage().getContentRaw() +" **`").complete();
+                event.getChannel().sendMessage("`** USER " + event.getMember().getUser().getName() + "#" + event.getMember().getUser().getDiscriminator() + " ISSUED COMMAND " + event.getMessage().getContentRaw() +" **`").queue();;
+            
             return;
     	}
     	else if(event.isFromType(ChannelType.PRIVATE))
@@ -35,21 +36,26 @@ public class DiscordMessageListener extends ListenerAdapter
                 {
                     returnMessage = returnMessage + player.getPlayer().getName() + " ";
                 }
-                event.getChannel().sendMessage(returnMessage).complete();
+                event.getChannel().sendMessage(returnMessage).queue();
             }
     	}
     	else if(event.getTextChannel().getName().equals(MinecordPlugin.getInstance().config.getString("DiscordChatChannel")))
     	{
             if(event.getMessage().getContentRaw().equals("/list"))
             {
-                String returnMessage = "Online Players: ";
+                String message = "Online Players: ";
 
                 for(Player player : Bukkit.getServer().getOnlinePlayers())
                 {
-                    returnMessage = returnMessage + player.getPlayer().getName() + " ";
+                    message = message + player.getPlayer().getName() + " ";
                 }
-                event.getChannel().deleteMessageById(event.getMessageIdLong()).complete();
-                event.getAuthor().openPrivateChannel().complete().sendMessage(returnMessage).complete();
+                final String returnMessage = message;
+                
+                event.getChannel().deleteMessageById(event.getMessageIdLong()).queue();
+                event.getAuthor().openPrivateChannel().queue(privateChannel -> { 
+                    privateChannel.sendMessage(returnMessage).queue();
+                });
+                return;
             }
 
             String prefix = MinecordPlugin.getInstance().config.getString("RolePrefixes.Everyone");
@@ -63,12 +69,14 @@ public class DiscordMessageListener extends ListenerAdapter
                 }
             }
 
-            event.getChannel().deleteMessageById(event.getMessageIdLong()).complete();
+            event.getChannel().deleteMessageById(event.getMessageIdLong()).queue();
 
             if(event.getMessage().getContentRaw().length() > 256)
             {
-                event.getAuthor().openPrivateChannel().complete().sendMessage("**ERROR: The message you just tried to send it over 256 characters! You sent:**").complete();
-                event.getAuthor().openPrivateChannel().complete().sendMessage(event.getMessage().getContentRaw()).complete();
+                event.getAuthor().openPrivateChannel().queue(privateChannel -> { 
+                    privateChannel.sendMessage("**ERROR: The message you just tried to send it over 256 characters! You sent:**").queue();
+                    privateChannel.sendMessage(event.getMessage().getContentRaw()).queue();
+                });
             }
             else
             {
@@ -81,13 +89,13 @@ public class DiscordMessageListener extends ListenerAdapter
                 if((firstChar == '*' && lastChar == '*') || (firstChar == '_' && lastChar == '_'))
                 {
                     Bukkit.broadcastMessage("§9> " + nicknamePrefix + event.getMember().getEffectiveName() + " " + event.getMessage().getContentStripped() + " <");
-                    event.getChannel().sendMessage("> **" + nicknamePrefix + event.getMember().getEffectiveName() + "** " + event.getMessage().getContentStripped() + " <").complete();
+                    event.getChannel().sendMessage("> **" + nicknamePrefix + event.getMember().getEffectiveName() + "** " + event.getMessage().getContentStripped() + " <").queue();
                 }
                 else
                 {
                     //Bukkit.broadcastMessage("§9<" + prefix + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContentRaw());
                     Bukkit.broadcastMessage("§9<" + prefix + nicknamePrefix + event.getMember().getEffectiveName() + "> " + event.getMessage().getContentStripped());
-                    event.getChannel().sendMessage("<" + prefix + "**" + nicknamePrefix + event.getMember().getEffectiveName() + "**> " + event.getMessage().getContentRaw()).complete();
+                    event.getChannel().sendMessage("<" + "**" + nicknamePrefix + event.getMember().getEffectiveName() + "**> " + event.getMessage().getContentRaw()).queue();
                 }
             }
     	}

@@ -12,8 +12,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 				<executions>
 				    <execution>
@@ -116,7 +116,13 @@
 		<dependency>
 				<groupId>net.dv8tion</groupId>
 				<artifactId>JDA</artifactId>
-    	<version>3.5.1_351</version>
+    	<version>3.8.1_447</version>
+            <exclusions>
+        <exclusion>
+            <groupId>club.minnced</groupId>
+            <artifactId>opus-java</artifactId>
+        </exclusion>
+    </exclusions>
     </dependency>
         <dependency>
         <groupId>org.apache.commons</groupId>
@@ -126,9 +132,9 @@
       <dependency>
 	    <groupId>net.ess3</groupId>
 	    <artifactId>EssentialsX</artifactId>
-	    <version>2.0.1</version>
+	    <version>2.15.0.55</version>
 	    <scope>system</scope>
-	    <systemPath>${project.basedir}/lib/EssentialsX-2.0.1.jar</systemPath>
+	    <systemPath>${project.basedir}/lib/EssentialsX-2.15.0.55.jar</systemPath>
 	  </dependency>
 	  <dependency>
 	    <groupId>org.apache.logging.log4j</groupId>
